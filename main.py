@@ -1,14 +1,18 @@
-i = 5
-k = 5
+import math
+import random
+
+i = 3
+k = 4
 j = 5
 
 
-for i in 'hello world':
-    if i == "l":
-        continue
-    print(i)
+#print(bin(pow(i, k)))
 
+#print(round(0.1+0.1+0.1+0.1+0.1+0.1+0.1+0.1+0.1+0.1))
+float_number = 0.1+0.1+0.1+0.1+0.1+0.1+0.1+0.1+0.1+0.1
+print(float_number.is_integer())
 
-print("hello")
-
+pi = math.pi
+random_number = random.random()
+print(random_number)
 
