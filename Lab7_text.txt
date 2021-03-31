@@ -1,0 +1,4 @@
+Your quantity: {'test'}
+Your quantity contains 1 words.
+Your dictionary: {'test': 'Neitrino'}
+Your quantity contains 1 words and keys.
