@@ -1,9 +1,13 @@
+
+from django.utils import timezone
 from django.http import HttpResponse, Http404, HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404
 from django.template import loader
 from django.urls import reverse
 from django.views import generic
+from pip._vendor.urllib3 import request
 
+from .forms import CreateForm
 from .models import Questions, Choice
 
 
@@ -20,7 +24,7 @@ class IndexView(generic.ListView):
 
     def get_queryset(self):
         """Return the last five published questions."""
-        return Questions.objects.order_by('-pub_date')[:5]
+        return Questions.objects.filter(pub_date__lte=timezone.now()).order_by('-pub_date')[:5]
 
 
 class DetailView(generic.DetailView):
@@ -50,3 +54,24 @@ def vote(request, question_id):
         # with POST data. This prevents data from being posted twice if a
         # user hits the Back button.
         return HttpResponseRedirect(reverse('polls:results', args=(question.id,)))
+
+
+def create_form(request):
+    return render(request, 'polls/create_form.html')
+
+
+def create(request):
+    if request.method == "POST":
+        form = CreateForm(request.POST)
+        if form.is_valid():
+            name = request.POST['question_name']
+            new_question = Questions(question_text=name, pub_date=timezone.now())
+            new_question.save()
+            return HttpResponseRedirect(reverse('polls:success_saved'))
+    else:
+        form = CreateForm()
+        return render(request, 'polls/create.html', {'form': form})
+
+
+def success_saved(request):
+    return render(request, 'polls/success_saved.html')
