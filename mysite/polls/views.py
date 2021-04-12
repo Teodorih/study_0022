@@ -5,6 +5,7 @@ from django.shortcuts import render, get_object_or_404
 from django.template import loader
 from django.urls import reverse
 from django.views import generic
+from django.views.generic import UpdateView, CreateView
 from pip._vendor.urllib3 import request
 
 from .forms import CreateForm
@@ -35,6 +36,25 @@ class DetailView(generic.DetailView):
 class ResultsView(generic.DetailView):
     model = Questions
     template_name = 'polls/results.html'
+
+
+class QuestionUpdateView(UpdateView):
+    model = Questions
+    fields = ['question_text']
+    template_name = 'polls/questions_update_form.html'
+
+
+class ChoiceUpdateView(UpdateView):
+    model = Choice
+    fields = ['question', 'choice_text']
+    template_name = 'polls/questions_update_form.html'
+
+
+class ChoiceCreateView(CreateView):
+    model = Choice
+    fields = ['question', 'choice_text']
+    template_name = 'polls/questions_update_form.html'
+
 
 
 def vote(request, question_id):
@@ -73,5 +93,21 @@ def create(request):
         return render(request, 'polls/create.html', {'form': form})
 
 
+def update(request):
+    if request.method == "POST":
+        form = CreateForm(request.POST)
+        if form.is_valid():
+            name = request.POST['question_name']
+            new_question = Questions(question_text=name, pub_date=timezone.now())
+            new_question.save()
+            return HttpResponseRedirect(reverse('polls:success_saved'))
+    else:
+        form = CreateForm()
+        return render(request, 'polls/create.html', {'form': form})
+
+
 def success_saved(request):
     return render(request, 'polls/success_saved.html')
+
+
+
